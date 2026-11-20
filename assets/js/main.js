@@ -504,89 +504,135 @@
   (function gallery() {
     var grid = $('#gallery-grid');
     var filterBar = $('.gallery-filters');
-    var data = (window.GALLERY || []).slice();
-    if (!grid) return;
-    var pending = data.length;
+    var moreWrap = $('.gallery-more');
+    var cfg = window.GALLERY_CONFIG || {};
+    if (!grid || !cfg.user) return;
+    var IMG = /\.(jpe?g|png|webp|gif|avif)$/i;
+    var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var CACHE_KEY = 'gallery-tree-v1', CACHE_MS = 10 * 60 * 1000;
+    var data = [], limit = cfg.initialCount || 12, expanded = false, activeTag = 'All';
 
-    function settle() { if (--pending <= 0) finish(); }
+    function tidy(s) { return s.replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim(); }
+    function sentence(s) { s = tidy(s); return s.charAt(0).toUpperCase() + s.slice(1); }
+    function parseAlbum(folder) {
+      var m = folder.match(/^(\d{4})(?:-(\d{1,2}))?[\s_-]+(.+)$/);
+      if (!m) return { name: tidy(folder) || 'Moments', when: '', sort: '0000-00 ' + folder };
+      var mon = m[2] ? MONTHS[+m[2] - 1] + ' ' : '';
+      return { name: tidy(m[3]), when: mon + m[1], sort: m[1] + '-' + (m[2] || '00').padStart(2, '0') + ' ' + m[3] };
+    }
+    function enc(path) { return path.split('/').map(encodeURIComponent).join('/'); }
 
-    data.forEach(function (g, i) {
-      var fig = document.createElement('figure');
-      fig.className = 'tile' + (g.wide ? ' tile--wide' : '');
-      fig.dataset.tag = g.tag || '';
-      fig.dataset.index = i;
-      var img = new Image();
-      img.alt = g.caption || '';
-      img.decoding = 'async';
-      img.onload = function () { fig.tabIndex = 0; settle(); };
-      img.onerror = function () {
-        img.remove();
-        if (editMode) {          // show where the photo should go
-          fig.classList.add('tile--empty');
-          fig.insertAdjacentHTML('afterbegin', '<span class="tile__ph"><svg><use href="#i-camera"/></svg>Photo coming soon</span><span class="tile__path"></span>');
-          $('.tile__path', fig).textContent = g.src;
-        } else {                 // on the live site, simply leave it out
-          fig.remove();
-        }
-        settle();
-      };
-      img.src = g.src;
-      fig.appendChild(img);
-      var cap = document.createElement('figcaption');
-      cap.innerHTML = (g.tag ? '<small></small>' : '') + '<span></span>';
-      if (g.tag) cap.querySelector('small').textContent = g.tag;
-      cap.querySelector('span').textContent = g.caption || '';
-      fig.appendChild(cap);
-      grid.appendChild(fig);
-    });
-    if (!data.length) finish();
+    function build(paths) {
+      var base = cfg.folder.replace(/\/$/, '') + '/';
+      data = paths.filter(function (p) { return p.indexOf(base) === 0 && IMG.test(p); }).map(function (p) {
+        var rel = p.slice(base.length), parts = rel.split('/');
+        var file = parts.pop(), folder = parts.join('/');
+        var album = folder ? parseAlbum(folder) : { name: 'Moments', when: '', sort: '0000-00' };
+        var stem = file.replace(/\.[^.]+$/, '').replace(/^\d+[\s_-]+/, '');
+        var generic = /^(img|dsc|dscn|pxl|photo|image|whatsapp|screenshot|signal)[\s_-]*\d*/i.test(stem) || /^\d+$/.test(stem);
+        var caption = (cfg.captions && cfg.captions[rel]) || (generic ? album.name : sentence(stem));
+        return { src: enc(p), caption: caption, tag: album.name, when: album.when, sort: album.sort, file: file };
+      });
+      data.sort(function (a, b) { return a.sort === b.sort ? a.file.localeCompare(b.file, undefined, { numeric: true }) : (a.sort < b.sort ? 1 : -1); });
+      render();
+    }
 
-    function finish() {
-      var tiles = $$('.tile', grid);
-      if (!tiles.length) {
-        grid.classList.add('is-empty');
-        filterBar.hidden = true;
-        grid.innerHTML = '<div class="gallery-empty"><span class="gallery-empty__icon"><svg><use href="#i-camera"/></svg></span>' +
-          '<div><h3>Photos are on their way</h3><p>Pictures from IGWC 2025, IEEE IGARSS 2025, Monash PITCH 2024 and my research year in Australia will appear here soon.</p></div></div>';
+    function emptyState(msg) {
+      grid.classList.add('is-empty'); filterBar.hidden = true; if (moreWrap) moreWrap.hidden = true;
+      grid.innerHTML = '<div class="gallery-empty"><span class="gallery-empty__icon"><svg><use href="#i-camera"/></svg></span><div>' + msg + '</div></div>';
+    }
+
+    function render() {
+      if (!data.length) {
+        emptyState('<h3>Photos are on their way</h3><p>Pictures from conferences, fieldwork and research visits will appear here soon.</p>');
         return;
       }
-      // filters from the tags that actually have tiles
+      grid.classList.remove('is-empty'); grid.innerHTML = '';
+      // album filter buttons
       var tags = ['All'];
-      tiles.forEach(function (t) { if (t.dataset.tag && tags.indexOf(t.dataset.tag) < 0) tags.push(t.dataset.tag); });
+      data.forEach(function (g) { if (tags.indexOf(g.tag) < 0) tags.push(g.tag); });
+      filterBar.innerHTML = '';
       filterBar.hidden = tags.length < 3;
-      tags.forEach(function (tag, i) {
+      tags.forEach(function (tag) {
         var b = document.createElement('button');
-        b.className = 'filter' + (i === 0 ? ' is-active' : '');
-        b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+        b.className = 'filter' + (tag === activeTag ? ' is-active' : '');
+        b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', String(tag === activeTag));
         b.textContent = tag; b.dataset.tag = tag;
         filterBar.appendChild(b);
       });
-      tiles.forEach(function (t, i) {
-        t.classList.add('reveal');
-        if (window.__revObs) window.__revObs.observe(t); else t.classList.add('in');
+      data.forEach(function (g, i) {
+        var fig = document.createElement('figure');
+        fig.className = 'tile' + (i === 0 ? ' tile--wide' : '');
+        fig.dataset.tag = g.tag; fig.dataset.index = i; fig.tabIndex = 0;
+        var img = document.createElement('img');
+        img.src = g.src; img.alt = g.caption; img.loading = 'lazy'; img.decoding = 'async';
+        img.onerror = function () { fig.remove(); };
+        fig.appendChild(img);
+        var cap = document.createElement('figcaption');
+        cap.innerHTML = '<small></small><span></span>';
+        cap.querySelector('small').textContent = g.tag + (g.when ? ' · ' + g.when : '');
+        cap.querySelector('span').textContent = g.caption;
+        fig.appendChild(cap);
+        grid.appendChild(fig);
       });
+      applyFilter();
+    }
+
+    function applyFilter() {
+      var shownCount = 0, total = 0;
+      $$('.tile', grid).forEach(function (t) {
+        var match = activeTag === 'All' || t.dataset.tag === activeTag;
+        if (match) total++;
+        var show = match && (expanded || shownCount < limit);
+        if (show) shownCount++;
+        t.classList.toggle('is-hidden', !show);
+        t.classList.add('in');
+      });
+      if (moreWrap) {
+        moreWrap.hidden = expanded || total <= limit;
+        var btn = $('button', moreWrap); if (btn) btn.textContent = 'Show all ' + total + ' photos';
+      }
     }
 
     filterBar.addEventListener('click', function (e) {
       var b = e.target.closest('.filter'); if (!b) return;
+      activeTag = b.dataset.tag;
       $$('.filter', filterBar).forEach(function (x) { x.classList.toggle('is-active', x === b); x.setAttribute('aria-selected', String(x === b)); });
-      $$('.tile', grid).forEach(function (tile) { tile.classList.toggle('is-hidden', b.dataset.tag !== 'All' && tile.dataset.tag !== b.dataset.tag); tile.classList.add('in'); });
+      applyFilter();
     });
+    if (moreWrap) $('button', moreWrap).addEventListener('click', function () { expanded = true; applyFilter(); });
+
+    // List the photo folder with GitHub's public API (cached for 10 minutes per visitor)
+    var cached = null;
+    try { cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); } catch (e) {}
+    if (cached && cached.paths && Date.now() - cached.t < CACHE_MS) { build(cached.paths); return; }
+    var url = 'https://api.github.com/repos/' + cfg.user + '/' + cfg.repo + '/git/trees/' + (cfg.branch || 'main') + '?recursive=1';
+    fetch(url, { headers: { Accept: 'application/vnd.github+json' } })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (json) {
+        var paths = (json.tree || []).filter(function (n) { return n.type === 'blob'; }).map(function (n) { return n.path; });
+        try { localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), paths: paths })); } catch (e) {}
+        build(paths);
+      })
+      .catch(function () {
+        if (cached && cached.paths) { build(cached.paths); return; }
+        emptyState('<h3>The gallery is taking a break</h3><p>Photos couldn’t be loaded just now. <a href="https://github.com/' + cfg.user + '/' + cfg.repo + '/tree/' + (cfg.branch || 'main') + '/' + cfg.folder + '" target="_blank" rel="noopener">See them on GitHub</a>.</p>');
+      });
 
     var lb = $('#lightbox'), lbImg = $('img', lb), lbCap = $('figcaption', lb), cur = -1, lastFocus = null;
-    function shown() { return $$('.tile:not(.tile--empty):not(.is-hidden)', grid); }
+    function shown() { return $$('.tile:not(.is-hidden)', grid); }
     function open(fig) {
       var list = shown(); cur = list.indexOf(fig); if (cur < 0) return;
       var g = data[+fig.dataset.index];
-      lbImg.src = g.src; lbImg.alt = g.caption || ''; lbCap.textContent = g.caption || '';
+      lbImg.src = g.src; lbImg.alt = g.caption; lbCap.textContent = g.caption + ' — ' + g.tag + (g.when ? ', ' + g.when : '');
       if (lb.hidden) lastFocus = document.activeElement;
       lb.hidden = false; document.body.style.overflow = 'hidden';
       $('.lightbox__close', lb).focus();
     }
     function close() { lb.hidden = true; document.body.style.overflow = ''; if (lastFocus) lastFocus.focus(); }
     function go(dir) { var list = shown(); if (!list.length) return; cur = (cur + dir + list.length) % list.length; open(list[cur]); }
-    grid.addEventListener('click', function (e) { var f = e.target.closest('.tile'); if (f && !f.classList.contains('tile--empty')) open(f); });
-    grid.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { var f = e.target.closest('.tile'); if (f && !f.classList.contains('tile--empty')) { e.preventDefault(); open(f); } } });
+    grid.addEventListener('click', function (e) { var f = e.target.closest('.tile'); if (f) open(f); });
+    grid.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { var f = e.target.closest('.tile'); if (f) { e.preventDefault(); open(f); } } });
     $('.lightbox__close', lb).addEventListener('click', close);
     $('.lightbox__prev', lb).addEventListener('click', function () { go(-1); });
     $('.lightbox__next', lb).addEventListener('click', function () { go(1); });

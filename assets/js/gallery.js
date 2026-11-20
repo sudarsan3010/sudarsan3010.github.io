@@ -1,26 +1,36 @@
 /* =====================================================================
-   GALLERY — the only file you need to edit to add photos.
+   GALLERY: fills itself automatically. No code editing needed.
    ---------------------------------------------------------------------
-   1. Upload your photo to the  images/gallery/  folder on GitHub
-      (keep files under ~500 KB; 1600 px on the long side is plenty).
-   2. Add or edit an entry below:
-        src     → path to the photo
-        caption → short description shown under the photo
-        tag     → one of the filter names (Conferences, Awards,
-                  Fieldwork, Research visits) or a new one of your own
-        wide    → optional: true makes the tile span two columns
-   3. Commit. The site updates in about a minute.
+   HOW TO ADD PHOTOS
+   On GitHub, open  images/gallery/  and upload your photos into a folder
+   for each event. Each folder becomes an album (a filter button on the site):
 
-   Entries whose photo is not uploaded yet are shown as tidy
-   "photo coming soon" tiles, so the gallery never looks broken.
+       images/gallery/2025-03_IGWC-2025-Roorkee/award.jpg
+       images/gallery/2025-08_IEEE-IGARSS-2025-Brisbane/poster.jpg
+       images/gallery/2026-12_AGU-2026-San-Francisco/talk.jpg
+
+   • Folder name = YYYY-MM_Event-name. The date sorts albums newest first and
+     is shown as "Mar 2025". Dashes and underscores become spaces.
+   • File name = caption ("best-presentation-award.jpg" → "Best presentation
+     award"). Camera names like IMG_1234.jpg simply use the album name.
+   • Easiest way to add a new event: on your computer, name a folder like the
+     ones above, put the photos in it, and drag the whole folder onto GitHub's
+     "Add file → Upload files" page inside images/gallery/.
+   • Photos appear on the site about a minute after you commit.
+   • Keep photos under about 1 MB each (resize phone photos first) so the page
+     stays fast.
+
+   OPTIONAL: nicer captions for particular photos (path inside images/gallery/)
    ===================================================================== */
 
-window.GALLERY = [
-  { src: "images/gallery/igwc-2025-award.jpg",  caption: "Receiving the Best Presentation Award, IGWC 2025, Roorkee", tag: "Awards", wide: true },
-  { src: "images/gallery/igarss-2025-poster.jpg", caption: "Poster at IEEE IGARSS 2025, Brisbane", tag: "Conferences" },
-  { src: "images/gallery/pitch-2024.jpg",       caption: "Monash PITCH 2024, Monash University Malaysia", tag: "Conferences" },
-  { src: "images/gallery/iscar-2025.jpg",       caption: "Dr J.S.P. Yadav Best Paper Award, ISCAR", tag: "Awards" },
-  { src: "images/gallery/csiro-2025.jpg",       caption: "Research visit at CSIRO, Australia", tag: "Research visits" },
-  { src: "images/gallery/monash-2025.jpg",      caption: "Monash University, Melbourne", tag: "Research visits" },
-  { src: "images/gallery/punjab-fieldwork.jpg", caption: "Groundwater sampling in Punjab", tag: "Fieldwork" }
-];
+window.GALLERY_CONFIG = {
+  user: "sudarsan3010",                 // GitHub username
+  repo: "sudarsan3010.github.io",       // repository name
+  branch: "main",
+  folder: "images/gallery",
+  initialCount: 12,                     // photos shown before "Show all"
+
+  captions: {
+    // "2025-03_IGWC-2025-Roorkee/award.jpg": "Receiving the Best Presentation Award at IGWC 2025",
+  }
+};
