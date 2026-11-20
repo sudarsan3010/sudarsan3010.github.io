@@ -145,7 +145,7 @@
     var ctx = canvas.getContext('2d');
     var W = 0, H = 0, DPR = 1, xs = 260, groundY = 0, wtBase = 0, wellX = 0, wellBottom = 0, riverX = 0, compact = false;
     var t = 0, running = false, visible = true, raf = null;
-    var particles = [], drops = [], rain = [], rings = [], stipple = [], crops = [];
+    var particles = [], drops = [], rain = [], rings = [], stipple = [], crops = [], spout = [];
     var mouse = { x: -1, y: -1, on: false };
     var M_PER_PX = 0; // metres per pixel for the probe readout
 
@@ -200,7 +200,7 @@
       particles = [];
       var nP = compact ? 70 : Math.min(190, Math.round(W / 7));
       for (var k = 0; k < nP; k++) particles.push(newParticle(true));
-      drops = []; rain = []; rings = [];
+      drops = []; rain = []; rings = []; spout = [];
       if (!running) draw();
     }
 
@@ -248,6 +248,13 @@
       for (var m = rings.length - 1; m >= 0; m--) {
         rings[m].r += 0.45; rings[m].a -= 0.018;
         if (rings[m].a <= 0) rings.splice(m, 1);
+      }
+      // pumped water leaving the outlet pipe and irrigating the field
+      var outY = ground(wellX) - 19;
+      if (t % 3 === 0) spout.push({ x: wellX + 23, y: outY, vx: rand(0.7, 1.3), vy: rand(-0.7, -0.1) });
+      for (var o = spout.length - 1; o >= 0; o--) {
+        var sp = spout[o]; sp.vy += 0.07; sp.x += sp.vx; sp.y += sp.vy;
+        if (sp.y > ground(sp.x) - 1) spout.splice(o, 1);
       }
     }
 
@@ -361,12 +368,14 @@
       ctx.beginPath(); ctx.moveTo(wellX - 5, gyW - 14); ctx.lineTo(wellX - 5, wellBottom); ctx.moveTo(wellX + 5, gyW - 14); ctx.lineTo(wellX + 5, wellBottom); ctx.stroke();
       ctx.setLineDash([2, 3]); ctx.strokeStyle = 'rgba(63, 201, 184, 0.9)';
       ctx.beginPath(); ctx.moveTo(wellX - 5, wellBottom - 46); ctx.lineTo(wellX - 5, wellBottom); ctx.moveTo(wellX + 5, wellBottom - 46); ctx.lineTo(wellX + 5, wellBottom); ctx.stroke();
-      ctx.setLineDash([4, 6]); ctx.lineDashOffset = t * 0.9; ctx.strokeStyle = 'rgba(111, 220, 207, 0.9)'; ctx.lineWidth = 2;
+      ctx.setLineDash([4, 6]); ctx.lineDashOffset = -t * 0.9; ctx.strokeStyle = 'rgba(111, 220, 207, 0.9)'; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.moveTo(wellX, wellBottom - 4); ctx.lineTo(wellX, gyW - 12); ctx.stroke();
       ctx.setLineDash([]);
       ctx.fillStyle = 'rgba(220, 240, 238, 0.9)';
       ctx.fillRect(wellX - 11, gyW - 22, 22, 9);
       ctx.fillRect(wellX + 9, gyW - 20, 14, 3);
+      ctx.fillStyle = 'rgba(111, 220, 207, 0.85)';
+      for (var sd = 0; sd < spout.length; sd++) { ctx.beginPath(); ctx.arc(spout[sd].x, spout[sd].y, 1.3, 0, 6.283); ctx.fill(); }
 
       // --- water-table symbol ▽
       var sx = W * (compact ? 0.32 : 0.36), sy = wt(sx);
