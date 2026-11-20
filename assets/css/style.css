@@ -704,6 +704,7 @@ body.menu-open .nav { color: #fff; background: transparent; box-shadow: none; ba
 .gallery-empty p { margin: 0; font-size: .95rem; }
 .gallery.is-empty { grid-auto-rows: auto; }
 .tile__path { position: absolute; top: 38px; left: 16px; font-family: var(--font-mono); font-size: .66rem; color: rgba(255, 255, 255, .45); }
+.gallery-more { display: flex; justify-content: center; margin-top: 1.5rem; }
 .gallery__note { display: none; margin-top: 1rem; font-size: .85rem; color: var(--muted); }
 .is-edit .gallery__note { display: block; }
 
