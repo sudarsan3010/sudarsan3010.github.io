@@ -1,12 +1,752 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Personal Website</title>
+
+  <!-- ============================================================
+       Sudarsan Natarajan — personal research website
+       Plain HTML + CSS + JS, hosted on GitHub Pages. No build step.
+       To edit content: search for the section comments below.
+       To add gallery photos: upload them to images/gallery/<event-folder>/ (they appear automatically)
+       ============================================================ -->
+
+  <title>Sudarsan Natarajan · Groundwater Hydrology</title>
+  <meta name="description" content="Sudarsan Natarajan — joint PhD candidate in groundwater hydrology at IIT Bombay and Monash University, modelling groundwater recharge, depletion and crop choices for the Indian Ganga Basin.">
+  <meta name="author" content="Sudarsan Natarajan">
+  <meta name="theme-color" content="#0b2644">
+  <link rel="canonical" href="https://sudarsan3010.github.io/">
+
+  <!-- Social share preview (LinkedIn, WhatsApp, X) -->
+  <meta property="og:type" content="profile">
+  <meta property="og:title" content="Sudarsan Natarajan · Groundwater Hydrology">
+  <meta property="og:description" content="Joint PhD candidate (IIT Bombay × Monash University) modelling groundwater sustainability in the Indian Ganga Basin.">
+  <meta property="og:url" content="https://sudarsan3010.github.io/">
+  <meta property="og:image" content="https://sudarsan3010.github.io/assets/img/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+
+  <link rel="preload" href="assets/fonts/schibsted-grotesk-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/instrument-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <!-- Apply saved / system theme before paint (avoids a flash) -->
+  <script>
+    (function () {
+      document.documentElement.classList.add('js');
+      var t = null;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (!t) t = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+
+  <!-- Structured data: helps Google show a proper profile result -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Sudarsan Natarajan",
+    "jobTitle": "Joint PhD Candidate, Groundwater Hydrology",
+    "affiliation": [
+      {"@type": "CollegeOrUniversity", "name": "Indian Institute of Technology Bombay"},
+      {"@type": "CollegeOrUniversity", "name": "Monash University"}
+    ],
+    "url": "https://sudarsan3010.github.io/",
+    "email": "mailto:sudarsan3010@gmail.com",
+    "sameAs": [
+      "https://www.linkedin.com/in/sudarsan-n-611792b7/",
+      "https://scholar.google.com/citations?user=bpT0AjIAAAAJ",
+      "https://orcid.org/0000-0001-5849-0856"
+    ],
+    "knowsAbout": ["Groundwater hydrology", "MODFLOW 6", "Noah-MP", "PEST++", "Groundwater recharge", "Simulation-optimisation", "Indian Ganga Basin"]
+  }
+  </script>
 </head>
+
 <body>
-  <h1>Hello, World!</h1>
-  <p>Welcome to my personal website hosted on GitHub Pages.</p>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ========== ICON SPRITE (reused with <use href="#i-name">) ========== -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-wt" viewBox="0 0 24 24"><path d="M4 4h16l-8 9z" fill="currentColor"/><path d="M7 16.5h10M9.5 20h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></symbol>
+      <symbol id="i-scholar" viewBox="0 0 24 24"><path fill="currentColor" d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3 1 9l11 6 9-4.91V17h2V9L12 3z"/></symbol>
+      <symbol id="i-linkedin" viewBox="0 0 24 24"><g fill="currentColor"><circle cx="5.6" cy="5.6" r="2"/><rect x="3.8" y="8.8" width="3.6" height="11.2" rx=".6"/><path d="M10 8.8h3.4v1.6c.6-1 1.9-1.9 3.8-1.9 3.2 0 3.9 2.1 3.9 4.9V20h-3.5v-5.8c0-1.4-.2-2.6-1.8-2.6-1.7 0-2.3 1.2-2.3 2.6V20H10z"/></g></symbol>
+      <symbol id="i-orcid" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><g fill="currentColor"><circle cx="8.2" cy="7.3" r="1.2"/><rect x="7.2" y="9.5" width="2" height="7.5" rx=".4"/></g><path d="M11.5 9.5h2.2a3.75 3.75 0 0 1 0 7.5h-2.2z" fill="none" stroke="currentColor" stroke-width="1.9"/></symbol>
+      <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7 8.5 6 8.5-6"/></symbol>
+      <symbol id="i-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+      <symbol id="i-arrow-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+      <symbol id="i-arrow-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
+      <symbol id="i-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
+      <symbol id="i-trophy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 6h3v1.5a3.5 3.5 0 0 1-3.5 3.5M7 6H4v1.5A3.5 3.5 0 0 0 7.5 11"/></symbol>
+      <symbol id="i-medal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="15" r="5.5"/><path d="M8.5 10.5 5 3h4.5L12 8l2.5-5H19l-3.5 7.5M12 12.5l.9 1.8 2 .3-1.45 1.4.35 2-1.8-.95-1.8.95.35-2-1.45-1.4 2-.3z"/></symbol>
+      <symbol id="i-team" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.6a3.5 3.5 0 0 1 0 6.8M18.5 20a6.5 6.5 0 0 0-2.6-5.2"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.7 2.7L16.5 9.5"/></symbol>
+      <symbol id="i-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></symbol>
+      <symbol id="i-poster" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M12 16v4M8 20h8M7 12.5l3-3 2 2 4-4"/></symbol>
+      <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5"/></symbol>
+      <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></symbol>
+      <symbol id="i-contact" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.8"/><path d="M2.5 20.5a6.5 6.5 0 0 1 13 0M19 8v6M16 11h6"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+      <symbol id="i-chev-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></symbol>
+      <symbol id="i-chev-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></symbol>
+      <symbol id="i-rain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 14a4.5 4.5 0 1 1 1.2-8.8A5.5 5.5 0 0 1 18.5 7 3.5 3.5 0 0 1 18 14z"/><path d="M8 17.5 7 20M12.5 17.5l-1 2.5M17 17.5l-1 2.5"/></symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/><path d="m3 17.5 9 5 9-5" opacity=".5"/></symbol>
+      <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-5 3 3 6-7"/><path d="M7 19v-1M11 19v-3M15 19v-2M19 19v-5" opacity=".5"/></symbol>
+      <symbol id="i-sprout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21v-9M12 12c0-4-3-6.5-7.5-6.5C4.5 10 7 12 12 12zM12 14.5c0-3.5 2.6-6 6.8-6 0 4-2.6 6-6.8 6z"/><path d="M6 21h12"/></symbol>
+      <symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2.5h7L17 8h3a1 1 0 0 1 1 1v9.5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.5"/></symbol>
+      <symbol id="i-quote" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7H5.5A1.5 1.5 0 0 0 4 8.5V12h5V7zM9 12c0 3-1.5 5-4 5.5M20 7h-3.5A1.5 1.5 0 0 0 15 8.5V12h5V7zM20 12c0 3-1.5 5-4 5.5"/></symbol>
+    </defs>
+  </svg>
+
+  <!-- ========== NAVIGATION ========== -->
+  <header class="nav" id="nav">
+    <div class="nav__inner container">
+      <a class="brand" href="#top" aria-label="Sudarsan Natarajan — back to top">
+        <span class="brand__mark"><svg><use href="#i-wt"/></svg></span>
+        <span class="brand__name">Sudarsan<span class="brand__dot">.</span></span>
+      </a>
+
+      <nav class="nav__links" aria-label="Primary">
+        <a href="#about">About</a>
+        <a href="#research">Research</a>
+        <a href="#publications">Publications</a>
+        <a href="#journey">Journey</a>
+        <a href="#recognition">Recognition</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <div class="nav__actions">
+        <button class="icon-btn theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark / light">
+          <svg class="ico-sun"><use href="#i-sun"/></svg>
+          <svg class="ico-moon"><use href="#i-moon"/></svg>
+        </button>
+        <a class="btn btn--sm btn--primary nav__cv" href="Sudarsan_Natarajan_CV.pdf" download>
+          <svg><use href="#i-download"/></svg><span>CV</span>
+        </a>
+        <button class="icon-btn nav__burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+          <svg><use href="#i-menu"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile menu (full-screen) -->
+  <div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="Mobile">
+      <a href="#about"><span>01</span>About</a>
+      <a href="#research"><span>02</span>Research</a>
+      <a href="#publications"><span>03</span>Publications</a>
+      <a href="#journey"><span>04</span>Journey</a>
+      <a href="#recognition"><span>05</span>Recognition</a>
+      <a href="#gallery"><span>06</span>Gallery</a>
+      <a href="#contact"><span>07</span>Contact</a>
+    </nav>
+    <div class="mobile-menu__social">
+      <a href="https://scholar.google.com/citations?user=bpT0AjIAAAAJ&amp;hl=en" target="_blank" rel="noopener" aria-label="Google Scholar"><svg><use href="#i-scholar"/></svg></a>
+      <a href="https://www.linkedin.com/in/sudarsan-n-611792b7/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg><use href="#i-linkedin"/></svg></a>
+      <a href="https://orcid.org/0000-0001-5849-0856" target="_blank" rel="noopener" aria-label="ORCID"><svg><use href="#i-orcid"/></svg></a>
+      <a href="mailto:sudarsan3010@gmail.com" aria-label="Email"><svg><use href="#i-mail"/></svg></a>
+    </div>
+  </div>
+
+  <!-- Depth gauge: a piezometer-style scroll indicator (desktop only) -->
+  <aside class="gauge" aria-hidden="true">
+    <div class="gauge__tube"><div class="gauge__water"></div></div>
+    <div class="gauge__marker"><svg><use href="#i-wt"/></svg><span class="gauge__depth">0 m</span></div>
+    <div class="gauge__label">m bgl</div>
+  </aside>
+
+  <main id="main">
+
+    <!-- ========== HERO ========== -->
+    <section class="hero" id="top" data-depth="0" data-stratum="Land surface">
+      <canvas class="hero__canvas" aria-hidden="true"></canvas>
+      <div class="hero__glow" aria-hidden="true"></div>
+
+      <div class="container hero__inner">
+        <div class="hero__text">
+          <p class="eyebrow eyebrow--light"><svg><use href="#i-wt"/></svg> Joint PhD · IIT Bombay × Monash University</p>
+
+          <h1 class="hero__name">Sudarsan <span>Natarajan</span></h1>
+
+          <p class="hero__role">
+            <span class="sr-only">Groundwater hydrologist working on recharge, regional aquifer modelling, future groundwater and crop choices that conserve groundwater in the Indian Ganga Basin.</span>
+            <span aria-hidden="true">Groundwater hydrologist working on
+            <span class="rotator"><span class="rotator__word">recharge under a changing climate</span></span>
+            <span class="hero__region">in the Indian Ganga Basin.</span></span>
+          </p>
+
+          <div class="status">
+            <span class="status__dot" aria-hidden="true"></span>
+            <span><strong>Open to postdoc roles</strong> from mid-2027 and research collaborations</span>
+          </div>
+
+          <div class="hero__cta">
+            <a class="btn btn--primary btn--lg" href="Sudarsan_Natarajan_CV.pdf" download>
+              <svg><use href="#i-download"/></svg> Download CV
+            </a>
+            <a class="btn btn--ghost btn--lg" href="#research">
+              Explore my research <svg><use href="#i-arrow-right"/></svg>
+            </a>
+          </div>
+
+          <ul class="hero__social" aria-label="Profiles">
+            <li><a href="https://scholar.google.com/citations?user=bpT0AjIAAAAJ&amp;hl=en" target="_blank" rel="noopener"><svg><use href="#i-scholar"/></svg><span>Google Scholar</span></a></li>
+            <li><a href="https://www.linkedin.com/in/sudarsan-n-611792b7/" target="_blank" rel="noopener"><svg><use href="#i-linkedin"/></svg><span>LinkedIn</span></a></li>
+            <li><a href="https://orcid.org/0000-0001-5849-0856" target="_blank" rel="noopener"><svg><use href="#i-orcid"/></svg><span>ORCID</span></a></li>
+            <li><a href="mailto:sudarsan3010@gmail.com"><svg><use href="#i-mail"/></svg><span>Email</span></a></li>
+          </ul>
+          <p class="hero__hint" aria-hidden="true"><span class="hero__hint-dot"></span> Tip: hover over the aquifer below to measure depth to water · click to add rain</p>
+        </div>
+
+        <!-- Portrait: add your photo at images/profile.jpg. Until then a monogram "well" is shown. -->
+        <div class="hero__portrait" aria-hidden="false">
+          <div class="ripples" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+          <div class="portrait">
+            <img src="images/profile.jpg" alt="Portrait of Sudarsan Natarajan" width="320" height="320" onerror="this.remove()">
+            <div class="portrait__fallback" aria-hidden="true">
+              <span class="portrait__initials">SN</span>
+              <svg class="portrait__wave" viewBox="0 0 200 40" preserveAspectRatio="none"><path d="M0 20 Q 25 8 50 20 T 100 20 T 150 20 T 200 20 V40 H0z"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <a class="hero__scroll" href="#now" aria-label="Scroll to latest updates">
+        <span>Go deeper</span><svg><use href="#i-arrow-down"/></svg>
+      </a>
+    </section>
+
+    <!-- ========== NOW / LATEST ========== -->
+    <section class="now" id="now" aria-labelledby="now-title">
+      <h2 class="sr-only" id="now-title">Latest updates</h2>
+      <div class="container">
+        <div class="now__grid">
+          <!-- data-until: after this date the tag/heading switch to the data-after text automatically -->
+          <article class="now-card now-card--feature reveal">
+            <p class="now-card__tag"><span class="pulse"></span> <span data-until="2026-12-12" data-after="Presented · Dec 2026">Upcoming · 7–11 Dec 2026</span></p>
+            <h3 data-until="2026-12-12" data-after="Presented at AGU Annual Meeting, San Francisco">Presenting at AGU Annual Meeting, San Francisco</h3>
+            <p>A machine-learning surrogate for a calibrated regional MODFLOW model, built to optimise groundwater abstraction in the Indian Ganga Basin.</p>
+          </article>
+          <article class="now-card reveal">
+            <p class="now-card__tag"><svg><use href="#i-trophy"/></svg> Award · Mar 2025</p>
+            <h3>Best Presentation Award, IGWC 2025</h3>
+            <p>10th International Groundwater Conference, Roorkee.</p>
+          </article>
+          <article class="now-card reveal">
+            <p class="now-card__tag"><svg><use href="#i-medal"/></svg> Award · 2025</p>
+            <h3>Dr J.S.P. Yadav Best Paper Award</h3>
+            <p>ISCAR, for 2022–24 — my Master's thesis paper.</p>
+          </article>
+          <article class="now-card reveal">
+            <p class="now-card__tag"><svg><use href="#i-globe"/></svg> Research visit · 2025–26</p>
+            <h3>Visiting researcher, Monash &amp; CSIRO</h3>
+            <p>A year in Australia building and calibrating the regional groundwater model.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 01 ABOUT ========== -->
+    <section class="section" id="about" data-depth="5" data-stratum="Topsoil">
+      <div class="container">
+        <header class="section__head reveal">
+          <p class="eyebrow"><span class="eyebrow__num">01</span> About</p>
+          <h2 class="section__title">Following water from the <em>rain</em> to the <em>aquifer</em> — and on to the decisions that depend on it.</h2>
+        </header>
+
+        <div class="about">
+          <div class="about__text reveal">
+            <p class="lead">I'm a joint PhD candidate at the IITB-Monash Research Academy, a partnership between IIT Bombay and Monash University. My research is on groundwater sustainability in the Indian Ganga Basin, a global hotspot of groundwater depletion.</p>
+            <p>My work links the land surface to the aquifer, and the aquifer to decisions. I study how climate shapes groundwater recharge, what drives long-term depletion — pumping, climate variability and change, and river–aquifer exchange — and whether recharging more or pumping less does more to reverse it. I'm now turning that understanding into district-level crop choices that conserve groundwater while sustaining farm output.</p>
+            <p>Before my PhD I worked on groundwater salinity and isotope hydrology at the National Institute of Hydrology, Roorkee, and on satellite mapping of coastal ponds in the Indian Sundarbans for my Master's at ISRO's Regional Remote Sensing Centre (East).</p>
+
+            <dl class="facts">
+              <div><dt>Based at</dt><dd>IIT Bombay, Mumbai</dd></div>
+              <div><dt>Joint with</dt><dd>Monash University, Melbourne</dd></div>
+              <div><dt>Study region</dt><dd>Indian Ganga Basin</dd></div>
+              <div><dt>Supervisors</dt><dd>Prof. J. Indu (IIT Bombay) · Dr Sreekanth Janardhanan (CSIRO) · Prof. Guido Tack (Monash)</dd></div>
+            </dl>
+          </div>
+
+          <div class="stats reveal" role="list">
+            <div class="stat" role="listitem"><span class="stat__num" data-count="7">0</span><span class="stat__label">Publications &amp; manuscripts</span></div>
+            <div class="stat" role="listitem"><span class="stat__num" data-count="2">0</span><span class="stat__label">Research awards</span></div>
+            <div class="stat" role="listitem"><span class="stat__num" data-count="3">0</span><span class="stat__label">Conference talks, 2025–26</span></div>
+            <div class="stat" role="listitem"><span class="stat__num" data-count="6" data-suffix="+">0</span><span class="stat__label">Years in hydrology research</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider" aria-hidden="true">
+      <svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path class="divider__fill" d="M0 40 C 240 10 480 70 720 40 S 1200 10 1440 40 V80 H0z"/><path class="divider__line" d="M0 40 C 240 10 480 70 720 40 S 1200 10 1440 40"/></svg>
+      <svg class="divider__wt"><use href="#i-wt"/></svg>
+    </div>
+
+    <!-- ========== 02 RESEARCH ========== -->
+    <section class="section section--tint" id="research" data-depth="12" data-stratum="Vadose zone">
+      <div class="container">
+        <header class="section__head reveal">
+          <p class="eyebrow"><span class="eyebrow__num">02</span> Research</p>
+          <h2 class="section__title">From rainfall to recommendations.</h2>
+          <p class="section__sub">Four connected questions, each building on the one before. Together they move from understanding the groundwater system to helping manage it.</p>
+        </header>
+
+        <ol class="flow">
+          <li class="flow__step reveal">
+            <div class="flow__icon"><svg><use href="#i-rain"/></svg></div>
+            <p class="flow__num">Step 1 · Recharge</p>
+            <h3>How does climate shape recharge?</h3>
+            <p>Land-surface modelling with Noah-MP on HPC to build an ensemble recharge climatology for the basin, comparing subsurface schemes and the roles of soil moisture and evapotranspiration.</p>
+            <ul class="tags"><li>Noah-MP</li><li>HPC</li><li>Recharge</li></ul>
+          </li>
+          <li class="flow__step reveal">
+            <div class="flow__icon"><svg><use href="#i-layers"/></svg></div>
+            <p class="flow__num">Step 2 · Aquifer</p>
+            <h3>What drives depletion?</h3>
+            <p>A regional MODFLOW 6 groundwater model, calibrated with ensemble methods, that separates the effects of abstraction, climate, recharge and stream–aquifer exchange.</p>
+            <ul class="tags"><li>MODFLOW 6</li><li>PEST++ IES</li><li>Data assimilation</li></ul>
+          </li>
+          <li class="flow__step reveal">
+            <div class="flow__icon"><svg><use href="#i-chart"/></svg></div>
+            <p class="flow__num">Step 3 · Futures</p>
+            <h3>What happens next?</h3>
+            <p>CMIP6-driven projections under parameter, climate and abstraction uncertainty, testing whether supply-side (recharge) or demand-side (pumping) measures work better.</p>
+            <ul class="tags"><li>CMIP6</li><li>Uncertainty</li><li>Scenarios</li></ul>
+          </li>
+          <li class="flow__step reveal">
+            <div class="flow__icon"><svg><use href="#i-sprout"/></svg></div>
+            <p class="flow__num">Step 4 · Decisions</p>
+            <h3>What should we grow?</h3>
+            <p>A machine-learning surrogate of the groundwater model, coupled with optimisation, to design district-level crop allocations that curb depletion and sustain farm output.</p>
+            <ul class="tags"><li>ML surrogate</li><li>Optimisation</li><li>Crop allocation</li></ul>
+          </li>
+        </ol>
+
+        <div class="research-extra">
+          <div class="research-extra__col">
+          <div class="why reveal">
+            <p class="why__label"><svg><use href="#i-pin"/></svg> Study region</p>
+            <h3>Why the Indian Ganga Basin?</h3>
+            <p>It is a global hotspot of groundwater depletion, where farming relies heavily on pumped groundwater. That makes it the right place to ask which choices, from recharge to crop mix, can keep its aquifers productive.</p>
+          </div>
+          <div class="earlier reveal">
+            <h3 class="mini-title">Earlier work</h3>
+            <div class="earlier__item">
+              <p class="earlier__when">2019–2020 · NIH Roorkee</p>
+              <p><strong>Groundwater salinity and isotopes in Punjab.</strong> Field sampling, hydrochemistry, tritium and stable-isotope analysis of salinisation and trace metals.</p>
+            </div>
+            <div class="earlier__item">
+              <p class="earlier__when">M.Tech · ISRO RRSC-East</p>
+              <p><strong>Coastal ponds of the Indian Sundarbans.</strong> A Sentinel-2 method to delineate ponds and tell clear from turbid water — later given a best paper award.</p>
+            </div>
+          </div>
+          </div>
+
+          <div class="toolkit reveal">
+            <h3 class="mini-title">Toolkit</h3>
+            <div class="toolkit__group"><p>Groundwater &amp; land-surface modelling</p><ul class="chips"><li>MODFLOW 6</li><li>Noah-MP</li><li>Recharge estimation</li><li>Stream–aquifer interaction</li></ul></div>
+            <div class="toolkit__group"><p>Calibration &amp; uncertainty</p><ul class="chips"><li>PEST++ (IES, SWP)</li><li>Ensemble data assimilation</li><li>Uncertainty propagation</li></ul></div>
+            <div class="toolkit__group"><p>Optimisation &amp; machine learning</p><ul class="chips"><li>Simulation–optimisation</li><li>Crop allocation</li><li>ML surrogates</li></ul></div>
+            <div class="toolkit__group"><p>Programming &amp; data</p><ul class="chips"><li>Python</li><li>HPC workflows</li><li>CMIP6 (bias-corrected)</li><li>Groundwater-level data</li></ul></div>
+            <div class="toolkit__group"><p>GIS, remote sensing &amp; field</p><ul class="chips"><li>ArcGIS</li><li>QGIS</li><li>ERDAS</li><li>ENVI</li><li>SNAP</li><li>Sentinel-2</li><li>Isotope sampling</li></ul></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 03 PUBLICATIONS ========== -->
+    <section class="section" id="publications" data-depth="25" data-stratum="Water table">
+      <div class="container">
+        <header class="section__head section__head--row reveal">
+          <div>
+            <p class="eyebrow"><span class="eyebrow__num">03</span> Publications</p>
+            <h2 class="section__title">Papers &amp; presentations</h2>
+          </div>
+          <a class="btn btn--outline" href="https://scholar.google.com/citations?user=bpT0AjIAAAAJ&amp;hl=en" target="_blank" rel="noopener"><svg><use href="#i-scholar"/></svg> Google Scholar</a>
+        </header>
+
+        <div class="filters reveal" role="tablist" aria-label="Filter publications">
+          <button class="filter is-active" role="tab" aria-selected="true" data-filter="all">All</button>
+          <button class="filter" role="tab" aria-selected="false" data-filter="manuscript">PhD manuscripts</button>
+          <button class="filter" role="tab" aria-selected="false" data-filter="journal">Journal articles</button>
+          <button class="filter" role="tab" aria-selected="false" data-filter="conference">Conferences</button>
+        </div>
+
+        <ol class="pubs">
+          <li class="pub reveal" data-type="manuscript">
+            <span class="pub__year pub__year--status">In review</span>
+            <div class="pub__body">
+              <h3 class="pub__title">Ensemble-based recharge climatology for the Indian Ganga Basin using Noah-MP subsurface schemes</h3>
+              <p class="pub__authors"><b>Sudarsan N</b>, Indu J, Janardhanan S, Tack G</p>
+              <p class="pub__meta"><span class="badge badge--review">Under review</span> Journal of Hydroinformatics</p>
+            </div>
+          </li>
+          <li class="pub reveal" data-type="manuscript">
+            <span class="pub__year pub__year--status">Ready</span>
+            <div class="pub__body">
+              <h3 class="pub__title">Linking historical groundwater depletion to future groundwater predictions in the Indian Ganga Basin under parameter, climate and abstraction uncertainty</h3>
+              <p class="pub__authors"><b>Sudarsan N</b>, Janardhanan S, Indu J, Tack G</p>
+              <p class="pub__meta"><span class="badge badge--prep">Ready for submission</span></p>
+            </div>
+          </li>
+          <li class="pub reveal" data-type="conference">
+            <span class="pub__year">2026</span>
+            <div class="pub__body">
+              <h3 class="pub__title">Developing a machine learning surrogate for a calibrated regional MODFLOW model to enable optimisation of groundwater abstraction in the Indian Ganga Basin</h3>
+              <p class="pub__authors"><b>Sudarsan N</b>, Indu J, Janardhanan S, Tack G</p>
+              <p class="pub__meta"><span class="badge badge--upcoming">Upcoming talk</span> AGU Annual Meeting, San Francisco, 7–11 Dec 2026</p>
+            </div>
+          </li>
+          <li class="pub reveal" data-type="conference">
+            <span class="pub__year">2025</span>
+            <div class="pub__body">
+              <h3 class="pub__title">Impact of soil moisture and evapotranspiration on recharge in the Indian Ganga Basin</h3>
+              <p class="pub__authors"><b>Sudarsan N</b>, Indu J, Janardhanan S, Tack G</p>
+              <p class="pub__meta"><span class="badge">Poster</span> IEEE IGARSS 2025, Brisbane</p>
+            </div>
+          </li>
+          <li class="pub reveal" data-type="conference">
+            <span class="pub__year">2025</span>
+            <div class="pub__body">
+              <h3 class="pub__title">Climatic impacts on groundwater recharge estimates for the Indian Ganga Basin (IGB)</h3>
+              <p class="pub__authors"><b>Sudarsan N</b>, Indu J, Janardhanan S, Tack G</p>
+              <p class="pub__meta"><span class="badge">Oral</span> IGWC 2025, NIH Roorkee <span class="badge badge--award"><svg><use href="#i-trophy"/></svg> Best Presentation Award</span></p>
+            </div>
+          </li>
+          <li class="pub reveal" data-type="journal">
+            <span class="pub__year">2022</span>
+            <div class="pub__body">
+              <h3 class="pub__title"><a href="https://doi.org/10.54894/JISCAR.40.2.2022.125302" target="_blank" rel="noopener">An approach to delineate ponds and differentiate between clear and turbid water ponds in Indian Sundarban area using Sentinel-2 MSI data</a></h3>
+              <p class="pub__authors"><b>Sudarsan N</b>, Kumar T, Salui C, et al.</p>
+              <p class="pub__meta"><span class="badge badge--pub">Published</span> <span class="pub__venue">J. Indian Soc. Coastal Agric. Res. 40(2): 14–32</span> <span class="badge badge--award"><svg><use href="#i-medal"/></svg> Best Paper Award 2022–24</span></p>
+            </div>
+          </li>
+          <li class="pub reveal" data-type="journal">
+            <span class="pub__year">2021</span>
+            <div class="pub__body">
+              <h3 class="pub__title"><a href="https://doi.org/10.1016/j.scitotenv.2021.148051" target="_blank" rel="noopener">Isotopes (δ18O, δD and 3H) variations in groundwater with emphasis on salinization in the State of Punjab, India</a></h3>
+              <p class="pub__authors">Krishan G, Kumar B, <b>Sudarsan N</b>, et al.</p>
+              <p class="pub__meta"><span class="badge badge--pub">Published</span> <span class="pub__venue">Science of the Total Environment, 789, 148051</span></p>
+            </div>
+          </li>
+          <li class="pub reveal" data-type="journal">
+            <span class="pub__year">2021</span>
+            <div class="pub__body">
+              <h3 class="pub__title"><a href="https://doi.org/10.1016/j.gsd.2021.100655" target="_blank" rel="noopener">Occurrences of potentially toxic trace metals in groundwater of the state of Punjab in northern India</a></h3>
+              <p class="pub__authors">Krishan G, Taloor AK, <b>Sudarsan N</b>, et al.</p>
+              <p class="pub__meta"><span class="badge badge--pub">Published</span> <span class="pub__venue">Groundwater for Sustainable Development, 15, 100655</span></p>
+            </div>
+          </li>
+          <li class="pub reveal" data-type="journal">
+            <span class="pub__year">2021</span>
+            <div class="pub__body">
+              <h3 class="pub__title"><a href="https://doi.org/10.1007/s40899-021-00510-2" target="_blank" rel="noopener">Impact of lockdown due to COVID-19 pandemic on groundwater salinity in Punjab, India: some hydrogeoethics issues</a></h3>
+              <p class="pub__authors">Krishan G, <b>Sudarsan N</b>, Sidhu BS, et al.</p>
+              <p class="pub__meta"><span class="badge badge--pub">Published</span> <span class="pub__venue">Sustainable Water Resources Management, 7, 27</span></p>
+            </div>
+          </li>
+          <li class="pub reveal" data-type="journal">
+            <span class="pub__year">2021</span>
+            <div class="pub__body">
+              <h3 class="pub__title"><a href="https://doi.org/10.1007/s12665-021-09419-7" target="_blank" rel="noopener">Groundwater salinity and isotope characterization: a case study from South-West Punjab, India</a></h3>
+              <p class="pub__authors">Krishan G, Vashisht R, <b>Sudarsan N</b>, et al.</p>
+              <p class="pub__meta"><span class="badge badge--pub">Published</span> <span class="pub__venue">Environmental Earth Sciences, 80, 169</span></p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ========== 04 JOURNEY (borehole log) ========== -->
+    <section class="section section--tint" id="journey" data-depth="40" data-stratum="Aquifer">
+      <div class="container">
+        <header class="section__head reveal">
+          <p class="eyebrow"><span class="eyebrow__num">04</span> Journey</p>
+          <h2 class="section__title">A borehole log of my career.</h2>
+          <p class="section__sub">Read it the way a hydrogeologist reads a drill core: newest layers on top, each one laid down on the last.</p>
+        </header>
+
+        <div class="log-legend reveal" aria-label="Legend">
+          <span><i class="lith lith--research"></i>Research</span>
+          <span><i class="lith lith--edu"></i>Education</span>
+          <span><i class="lith lith--industry"></i>Industry</span>
+        </div>
+
+        <ol class="borelog">
+          <li class="layer reveal" data-kind="research">
+            <div class="layer__depth">2025<br><small>– 2026</small></div>
+            <div class="layer__core lith lith--research"></div>
+            <div class="layer__card">
+              <h3>Visiting Doctoral Researcher</h3>
+              <p class="layer__org"><svg><use href="#i-pin"/></svg> Monash University &amp; CSIRO, Australia</p>
+              <p>About six months at CSIRO developing and calibrating the regional MODFLOW 6 model with ensemble methods, then six at Monash building the optimisation framework.</p>
+            </div>
+          </li>
+          <li class="layer reveal" data-kind="edu">
+            <div class="layer__depth">2023<br><small>– 2027</small></div>
+            <div class="layer__core lith lith--edu"></div>
+            <div class="layer__card">
+              <h3>PhD (Joint), Civil Engineering</h3>
+              <p class="layer__org"><svg><use href="#i-pin"/></svg> IIT Bombay &amp; Monash University · expected 2027</p>
+              <p><em>Optimization of groundwater planning and management under predictive uncertainties using computationally efficient data assimilation.</em> IITB-Monash joint PhD scholarship.</p>
+            </div>
+          </li>
+          <li class="layer reveal" data-kind="industry">
+            <div class="layer__depth">2022</div>
+            <div class="layer__core lith lith--industry"></div>
+            <div class="layer__card">
+              <h3>Senior GIS Executive</h3>
+              <p class="layer__org"><svg><use href="#i-pin"/></svg> NeoGeoInfo Technologies Pvt. Ltd., Agartala</p>
+            </div>
+          </li>
+          <li class="layer reveal" data-kind="research">
+            <div class="layer__depth">2021</div>
+            <div class="layer__core lith lith--research"></div>
+            <div class="layer__card">
+              <h3>Project Associate-II</h3>
+              <p class="layer__org"><svg><use href="#i-pin"/></svg> Institute of Remote Sensing, Anna University, Chennai</p>
+            </div>
+          </li>
+          <li class="layer reveal" data-kind="research">
+            <div class="layer__depth">2019<br><small>– 2020</small></div>
+            <div class="layer__core lith lith--research"></div>
+            <div class="layer__card">
+              <h3>Junior Research Fellow</h3>
+              <p class="layer__org"><svg><use href="#i-pin"/></svg> National Institute of Hydrology, Roorkee</p>
+              <p>Groundwater salinity and trace-metal studies across Punjab using isotopes, tritium and hydrochemistry, from field sampling to lab analysis and publication.</p>
+            </div>
+          </li>
+          <li class="layer reveal" data-kind="edu">
+            <div class="layer__depth">2017<br><small>– 2019</small></div>
+            <div class="layer__core lith lith--edu"></div>
+            <div class="layer__card">
+              <h3>M.Tech, Geoinformatics (GIS &amp; Remote Sensing)</h3>
+              <p class="layer__org"><svg><use href="#i-pin"/></svg> IIEST Shibpur</p>
+              <p>Dissertation at ISRO RRSC-East, Kolkata: Sentinel-2 delineation of clear and turbid ponds in the Indian Sundarbans.</p>
+            </div>
+          </li>
+          <li class="layer reveal" data-kind="edu">
+            <div class="layer__depth">2013<br><small>– 2017</small></div>
+            <div class="layer__core lith lith--edu"></div>
+            <div class="layer__card">
+              <h3>B.E., Civil Engineering</h3>
+              <p class="layer__org"><svg><use href="#i-pin"/></svg> Anna University, Chennai</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ========== 05 RECOGNITION (awards + conferences) ========== -->
+    <section class="section" id="recognition" data-depth="60" data-stratum="Confined aquifer">
+      <div class="container">
+        <header class="section__head reveal">
+          <p class="eyebrow"><span class="eyebrow__num">05</span> Recognition</p>
+          <h2 class="section__title">Awards, conferences &amp; programmes</h2>
+        </header>
+
+        <h3 class="sub-head reveal">Awards &amp; honours</h3>
+        <div class="awards">
+          <article class="award award--gold reveal">
+            <div class="award__icon"><svg><use href="#i-trophy"/></svg></div>
+            <p class="award__when">March 2025</p>
+            <h4>Best Presentation Award</h4>
+            <p class="award__where">10th International Groundwater Conference (IGWC 2025), NIH Roorkee</p>
+            <p>For <em>"Climatic impacts on groundwater recharge estimates for the Indian Ganga Basin"</em>, in the session on climate change impacts on groundwater and adaptation.</p>
+            <a class="link-arrow" href="https://lnkd.in/p/dz2BXzyv" target="_blank" rel="noopener">See the announcement <svg><use href="#i-external"/></svg></a>
+          </article>
+
+          <article class="award award--gold reveal">
+            <div class="award__icon"><svg><use href="#i-medal"/></svg></div>
+            <p class="award__when">2025 · for 2022–24</p>
+            <h4>Dr J.S.P. Yadav Best Paper Award</h4>
+            <p class="award__where">Indian Society of Coastal Agricultural Research (ISCAR)</p>
+            <p>For my Master's thesis paper on Sentinel-2 mapping of clear and turbid ponds in the Sundarbans (<em>J. Indian Soc. Coastal Agric. Res.</em>, 2022). Announced February 2025.</p>
+            <a class="link-arrow" href="assets/docs/JSP-Yadav-Best-Paper-Award-2022-24.pdf" target="_blank" rel="noopener">View award letter (PDF) <svg><use href="#i-file"/></svg></a>
+          </article>
+
+          <article class="award award--half reveal">
+            <div class="award__icon"><svg><use href="#i-team"/></svg></div>
+            <p class="award__when">September 2024</p>
+            <h4>Selected, fully funded — Monash PITCH 2024</h4>
+            <p class="award__where">PhD Interdisciplinary Team Challenge, Monash University Malaysia</p>
+            <p>A week of interdisciplinary teamwork with PhD researchers on challenges facing Malaysian communities.</p>
+            <a class="link-arrow" href="https://lnkd.in/p/deFqVsSB" target="_blank" rel="noopener">Read more <svg><use href="#i-external"/></svg></a>
+          </article>
+
+          <article class="award award--list reveal">
+            <h4>More honours</h4>
+            <ul class="honours">
+              <li><span class="honours__icon"><svg><use href="#i-scholar"/></svg></span><div><b>IITB-Monash Joint PhD Scholarship</b><span>IITB-Monash Research Academy · 2023–2026</span></div></li>
+              <li><span class="honours__icon"><svg><use href="#i-check"/></svg></span><div><b>Qualified GATE</b><span>Civil Engineering · 2017</span></div></li>
+              <li><span class="honours__icon"><svg><use href="#i-team"/></svg></span><div><b>Organising team, Roorkee Water Conclave</b><span>International conference · 2020</span></div></li>
+            </ul>
+          </article>
+        </div>
+
+        <h3 class="sub-head reveal">Conferences &amp; events</h3>
+        <ol class="events">
+          <li class="event event--upcoming reveal">
+            <div class="event__date"><span>Dec</span><b>2026</b></div>
+            <div class="event__body">
+              <p class="event__type"><svg><use href="#i-mic"/></svg> Presentation · Upcoming</p>
+              <h4>AGU Annual Meeting</h4>
+              <p class="event__where">San Francisco, USA</p>
+            </div>
+          </li>
+          <li class="event reveal">
+            <div class="event__date"><span>Aug</span><b>2025</b></div>
+            <div class="event__body">
+              <p class="event__type"><svg><use href="#i-poster"/></svg> Poster</p>
+              <h4>IEEE IGARSS 2025</h4>
+              <p class="event__where">Brisbane, Australia</p>
+              <a class="link-arrow" href="https://lnkd.in/p/dABvd8fp" target="_blank" rel="noopener">Highlights <svg><use href="#i-external"/></svg></a>
+            </div>
+          </li>
+          <li class="event reveal">
+            <div class="event__date"><span>Mar</span><b>2025</b></div>
+            <div class="event__body">
+              <p class="event__type"><svg><use href="#i-mic"/></svg> Oral · Best Presentation</p>
+              <h4>IGWC 2025</h4>
+              <p class="event__where">NIH Roorkee, India</p>
+              <a class="link-arrow" href="https://lnkd.in/p/dxcbP9ft" target="_blank" rel="noopener">Highlights <svg><use href="#i-external"/></svg></a>
+            </div>
+          </li>
+          <li class="event reveal">
+            <div class="event__date"><span>Sep</span><b>2024</b></div>
+            <div class="event__body">
+              <p class="event__type"><svg><use href="#i-team"/></svg> Workshop · Fully funded</p>
+              <h4>Monash PITCH 2024</h4>
+              <p class="event__where">Monash University Malaysia</p>
+              <a class="link-arrow" href="https://lnkd.in/p/deFqVsSB" target="_blank" rel="noopener">Highlights <svg><use href="#i-external"/></svg></a>
+            </div>
+          </li>
+          <li class="event reveal">
+            <div class="event__date"><span>Year</span><b>2020</b></div>
+            <div class="event__body">
+              <p class="event__type"><svg><use href="#i-team"/></svg> Organising team</p>
+              <h4>Roorkee Water Conclave 2020</h4>
+              <p class="event__where">International conference, Roorkee</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ========== 06 GALLERY ========== -->
+    <section class="section section--tint" id="gallery" data-depth="90" data-stratum="Deep aquifer">
+      <div class="container">
+        <header class="section__head reveal">
+          <p class="eyebrow"><span class="eyebrow__num">06</span> Gallery</p>
+          <h2 class="section__title">Moments from the field &amp; the conference floor</h2>
+        </header>
+
+        <div class="filters gallery-filters" role="tablist" aria-label="Filter gallery by event" hidden></div>
+        <div class="gallery" id="gallery-grid"></div>
+        <div class="gallery-more" hidden><button class="btn btn--outline" type="button">Show all photos</button></div>
+        <p class="gallery__note"><b>Edit preview</b> — photos load automatically from <code>images/gallery/&lt;event folder&gt;/</code> in the repository. See <code>images/gallery/README.md</code>.</p>
+      </div>
+    </section>
+
+    <!-- ========== 07 CONTACT ========== -->
+    <section class="section contact" id="contact" data-depth="120" data-stratum="Bedrock">
+      <div class="container contact__grid">
+        <div class="contact__text reveal">
+          <p class="eyebrow"><span class="eyebrow__num">07</span> Contact</p>
+          <h2 class="section__title">Let's talk groundwater.</h2>
+          <p class="lead">I'm open to postdoctoral roles from mid-2027 and to research collaborations on groundwater modelling, uncertainty and water–food decisions.</p>
+
+          <button class="email-copy" type="button" data-email="sudarsan3010@gmail.com">
+            <svg><use href="#i-mail"/></svg>
+            <span>sudarsan3010@gmail.com</span>
+            <span class="email-copy__hint"><svg><use href="#i-copy"/></svg> Copy</span>
+          </button>
+
+          <div class="contact__links">
+            <a class="btn btn--primary" href="Sudarsan_Natarajan_CV.pdf" download><svg><use href="#i-download"/></svg> Download CV</a>
+            <a class="btn btn--outline" href="assets/sudarsan-natarajan.vcf" download><svg><use href="#i-contact"/></svg> Save contact</a>
+          </div>
+          <ul class="contact__social">
+            <li><a href="https://scholar.google.com/citations?user=bpT0AjIAAAAJ&amp;hl=en" target="_blank" rel="noopener"><svg><use href="#i-scholar"/></svg> Google Scholar</a></li>
+            <li><a href="https://www.linkedin.com/in/sudarsan-n-611792b7/" target="_blank" rel="noopener"><svg><use href="#i-linkedin"/></svg> LinkedIn</a></li>
+            <li><a href="https://orcid.org/0000-0001-5849-0856" target="_blank" rel="noopener"><svg><use href="#i-orcid"/></svg> ORCID</a></li>
+          </ul>
+        </div>
+
+        <!-- Interactive visiting card (click / tap to flip) -->
+        <div class="card-wrap reveal">
+          <button class="vcard" type="button" aria-label="Flip my research card">
+            <div class="vcard__inner">
+              <div class="vcard__face vcard__front">
+                <div class="vcard__top">
+                  <p class="vcard__name">Sudarsan Natarajan</p>
+                  <p class="vcard__role">PhD Scholar, Groundwater Hydrology</p>
+                  <p class="vcard__org">IIT Bombay × Monash University</p>
+                  <p class="vcard__tag">Groundwater sustainability through modelling and future projections for the Indian Ganga Basin</p>
+                </div>
+                <svg class="vcard__wave" viewBox="0 0 400 70" preserveAspectRatio="none" aria-hidden="true">
+                  <path d="M0 22 C 80 12 160 30 240 18 S 360 10 400 16 V70 H0z" class="w1"/>
+                  <path d="M0 36 C 90 30 180 44 270 34 S 370 28 400 32" class="w2"/>
+                  <path d="M0 14 C 100 8 200 20 300 12 S 380 8 400 10" class="w3"/>
+                  <path d="M0 50 C 100 44 220 56 320 48 S 380 46 400 46 V70 H0z" class="w4"/>
+                </svg>
+                <div class="vcard__bar"><span><svg><use href="#i-mail"/></svg>sudarsan3010@gmail.com</span><span><svg><use href="#i-globe"/></svg>sudarsan3010.github.io</span></div>
+              </div>
+              <div class="vcard__face vcard__back">
+                <div class="vcard__rings" aria-hidden="true"></div>
+                <div class="vcard__col">
+                  <p class="vcard__h">Current research</p>
+                  <p class="vcard__p">Optimising crop choices to conserve groundwater under climate change</p>
+                  <p class="vcard__h">Key skills</p>
+                  <p class="vcard__p vcard__skills">MODFLOW · Noah-MP · PESTPP-IES · Python · GIS · Optimisation</p>
+                  <p class="vcard__h">Open to</p>
+                  <p class="vcard__p">Postdoc roles from mid-2027 and research collaborations</p>
+                </div>
+                <div class="vcard__qr"><img src="assets/img/qr.svg" alt="QR code linking to sudarsan3010.github.io" width="116" height="116"></div>
+              </div>
+            </div>
+          </button>
+          <p class="card-wrap__hint"><svg><use href="#i-wt"/></svg> Tap the card to flip it · <a href="Sudarsan%20Natarajan%20%E2%80%94%20Research%20Card.pdf" target="_blank" rel="noopener">Download PDF</a></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <svg class="footer__wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 30 C 240 0 480 60 720 30 S 1200 0 1440 30 V60 H0z"/></svg>
+    <div class="container footer__inner">
+      <p class="footer__brand"><svg><use href="#i-wt"/></svg> Sudarsan Natarajan</p>
+      <p class="footer__meta">© <span id="year">2026</span> · Groundwater hydrology, IIT Bombay × Monash University</p>
+      <p class="footer__meta">Hand-built with HTML, CSS &amp; JavaScript. Like the design? <a href="https://github.com/sudarsan3010/sudarsan3010.github.io" target="_blank" rel="noopener">The source is open</a> — feel free to adapt it, with credit.</p>
+      <a class="to-top" href="#top" aria-label="Back to the surface"><svg><use href="#i-arrow-up"/></svg> Back to the surface</a>
+    </div>
+  </footer>
+
+  <!-- Lightbox for gallery -->
+  <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Photo viewer">
+    <button class="lightbox__close icon-btn" type="button" aria-label="Close"><svg><use href="#i-close"/></svg></button>
+    <button class="lightbox__nav lightbox__prev icon-btn" type="button" aria-label="Previous photo"><svg><use href="#i-chev-left"/></svg></button>
+    <figure class="lightbox__fig"><img alt=""><figcaption></figcaption></figure>
+    <button class="lightbox__nav lightbox__next icon-btn" type="button" aria-label="Next photo"><svg><use href="#i-chev-right"/></svg></button>
+  </div>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+
+  <script src="assets/js/gallery.js"></script>
+  <script src="assets/js/main.js"></script>
 </body>
 </html>
