@@ -30,6 +30,23 @@
   var $ = function (s, el) { return (el || document).querySelector(s); };
   var $$ = function (s, el) { return Array.prototype.slice.call((el || document).querySelectorAll(s)); };
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Motion: computers set to "reduce motion" get a calm (slower, gentler) animation
+     instead of none, and everyone can pause or play with the button in the header. */
+  var motion = { calm: reduceMotion, paused: false, subs: [] };
+  try { motion.paused = localStorage.getItem('motion') === 'paused'; } catch (e) {}
+  motion.notify = function () { motion.subs.forEach(function (fn) { fn(); }); };
+  function setPaused(p) {
+    motion.paused = p;
+    document.documentElement.classList.toggle('motion-paused', p);
+    try { localStorage.setItem('motion', p ? 'paused' : 'on'); } catch (e) {}
+    $$('.motion-toggle').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(p));
+      b.setAttribute('aria-label', p ? 'Play animations' : 'Pause animations');
+      b.title = p ? 'Play animations' : 'Pause animations';
+    });
+    motion.notify();
+  }
   var root = document.documentElement;
 
   // "Edit preview": on your own computer, or with ?edit in the URL, empty gallery slots are shown with their file paths
@@ -45,6 +62,15 @@
     }
   });
   var yearEl = $('#year'); if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  /* ---------- 0. Motion toggle ---------- */
+  $$('.motion-toggle').forEach(function (btn) { btn.addEventListener('click', function () { setPaused(!motion.paused); }); });
+  setPaused(motion.paused);
+  if (window.matchMedia) {
+    var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var onMq = function () { motion.calm = mq.matches; motion.notify(); };
+    if (mq.addEventListener) mq.addEventListener('change', onMq); else if (mq.addListener) mq.addListener(onMq);
+  }
 
   /* ---------- 1. Theme toggle ---------- */
   $$('.theme-toggle').forEach(function (btn) {
@@ -101,16 +127,19 @@
     'crop choices that conserve groundwater'
   ];
   var rot = $('.rotator__word');
-  if (rot && !reduceMotion) {
-    var wi = 0;
+  if (rot) {
+    var wi = 0, lastSwap = Date.now();
     setInterval(function () {
+      if (motion.paused || document.hidden) { lastSwap = Date.now(); return; }
+      if (Date.now() - lastSwap < (motion.calm ? 5600 : 3200)) return;
+      lastSwap = Date.now();
       rot.classList.add('is-out');
       setTimeout(function () {
         wi = (wi + 1) % words.length;
         rot.textContent = words[wi];
         rot.classList.remove('is-out');
       }, 380);
-    }, 3200);
+    }, 400);
   }
 
   /* ---------- 5. Depth gauge (piezometer scroll indicator) ---------- */
@@ -210,8 +239,10 @@
       return { x: x, y: rand(top, bot), px: x, py: 0, s: rand(0.35, 0.9), life: 0 };
     }
 
+    var acc = { drop: 0, rain: 0, spout: 0 };
     function step() {
-      t += 1;
+      var sp = motion.calm ? 0.45 : 1;          // calm mode runs at under half speed
+      t += sp;
       // flow: regional gradient to the right + capture zone of the pumping well
       for (var i = 0; i < particles.length; i++) {
         var p = particles[i];
@@ -223,38 +254,43 @@
         vx += (dx / dist) * capture * 1.6;
         vy += (dy / dist) * capture * 1.6;
         vy += Math.sin((p.x + t) * 0.01) * 0.08;
-        p.x += vx; p.y += vy; p.life++;
+        p.x += vx * sp; p.y += vy * sp; p.life += sp;
         var top = wt(p.x) + 4;
         if (p.y < top) p.y = top;
         if (p.y > H - 3) p.y = H - 3;
         if (dist < 9 || p.x > W + 10) particles[i] = newParticle(false);
       }
       // recharge drops percolating through the vadose zone
-      if (t % (compact ? 14 : 8) === 0) {
+      acc.drop += sp;
+      var dropEvery = (compact ? 14 : 8) * (motion.calm ? 1.6 : 1);
+      if (acc.drop >= dropEvery) {
+        acc.drop -= dropEvery;
         var x0 = rand(0, W);
         if (Math.abs(x0 - wellX) > 16) drops.push({ x: x0, y: ground(x0) + 2, v: rand(0.35, 0.6) });
       }
       for (var j = drops.length - 1; j >= 0; j--) {
         var d = drops[j];
-        d.y += d.v; d.x += Math.sin((d.y + d.x) * 0.05) * 0.15;
-        if (d.y >= wt(d.x)) { rings.push({ x: d.x, y: wt(d.x), r: 1, a: 0.7 }); drops.splice(j, 1); }
+        d.y += d.v * sp; d.x += Math.sin((d.y + d.x) * 0.05) * 0.15 * sp;
+        if (d.y >= wt(d.x)) { if (!motion.calm) rings.push({ x: d.x, y: wt(d.x), r: 1, a: 0.7 }); drops.splice(j, 1); }
       }
-      // light rain just above the land surface
-      if (t % 3 === 0) rain.push({ x: rand(0, W + 60), y: groundY - rand(60, 120), v: rand(3.2, 4.4) });
+      // light rain just above the land surface (left out in calm mode)
+      acc.rain += sp;
+      if (acc.rain >= 3) { acc.rain -= 3; if (!motion.calm) rain.push({ x: rand(0, W + 60), y: groundY - rand(60, 120), v: rand(3.2, 4.4) }); }
       for (var k = rain.length - 1; k >= 0; k--) {
-        var r = rain[k]; r.y += r.v; r.x -= r.v * 0.25;
+        var r = rain[k]; r.y += r.v * sp; r.x -= r.v * 0.25 * sp;
         if (r.y > ground(r.x)) rain.splice(k, 1);
       }
       for (var m = rings.length - 1; m >= 0; m--) {
-        rings[m].r += 0.45; rings[m].a -= 0.018;
+        rings[m].r += 0.45 * sp; rings[m].a -= 0.018 * sp;
         if (rings[m].a <= 0) rings.splice(m, 1);
       }
       // pumped water leaving the outlet pipe and irrigating the field
       var outY = ground(wellX) - 19;
-      if (t % 3 === 0) spout.push({ x: wellX + 23, y: outY, vx: rand(0.7, 1.3), vy: rand(-0.7, -0.1) });
+      acc.spout += sp;
+      if (acc.spout >= 3) { acc.spout -= 3; spout.push({ x: wellX + 23, y: outY, vx: rand(0.7, 1.3), vy: rand(-0.7, -0.1) }); }
       for (var o = spout.length - 1; o >= 0; o--) {
-        var sp = spout[o]; sp.vy += 0.07; sp.x += sp.vx; sp.y += sp.vy;
-        if (sp.y > ground(sp.x) - 1) spout.splice(o, 1);
+        var so = spout[o]; so.vy += 0.07 * sp; so.x += so.vx * sp; so.y += so.vy * sp;
+        if (so.y > ground(so.x) - 1) spout.splice(o, 1);
       }
     }
 
@@ -420,12 +456,14 @@
       step(); draw();
       raf = requestAnimationFrame(loop);
     }
-    function start() { if (running || reduceMotion) return; running = true; raf = requestAnimationFrame(loop); }
+    function start() { if (running || motion.paused) return; running = true; raf = requestAnimationFrame(loop); }
     function stop() { running = false; if (raf) cancelAnimationFrame(raf); }
 
     resize();
-    if (reduceMotion) { for (var w = 0; w < 200; w++) step(); draw(); }
-    else start();
+    for (var w = 0; w < 160; w++) step();   // start from a "settled" scene
+    draw();
+    start();
+    motion.subs.push(function () { if (motion.paused) { stop(); draw(); } else if (visible && !document.hidden) start(); });
 
     var resizeT;
     window.addEventListener('resize', function () { clearTimeout(resizeT); resizeT = setTimeout(resize, 120); });
@@ -437,9 +475,9 @@
     hero.addEventListener('pointermove', function (e) {
       var r = canvas.getBoundingClientRect();
       mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; mouse.on = true;
-      if (reduceMotion) draw();
+      if (!running) draw();
     });
-    hero.addEventListener('pointerleave', function () { mouse.on = false; if (reduceMotion) draw(); });
+    hero.addEventListener('pointerleave', function () { mouse.on = false; if (!running) draw(); });
     hero.addEventListener('click', function (e) {
       if (e.target.closest('a, button')) return;
       var r = canvas.getBoundingClientRect(), x = e.clientX - r.left;
