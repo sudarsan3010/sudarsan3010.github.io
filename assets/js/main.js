@@ -1,5 +1,5 @@
 /* =====================================================================
-   Sudarsan Natarajan — site behaviour (no libraries)
+   Sudarsan Natarajan: site behaviour (no libraries)
    1. Theme toggle        6. Animated aquifer cross-section (hero)
    2. Navigation          7. Reveal-on-scroll + counters
    3. Mobile menu         8. Publication filters
@@ -663,7 +663,7 @@
       })
       .catch(function () {
         if (cached && cached.paths) { build(cached.paths); return; }
-        emptyState('<h3>The gallery is taking a break</h3><p>Photos couldn’t be loaded just now. <a href="https://github.com/' + cfg.user + '/' + cfg.repo + '/tree/' + (cfg.branch || 'main') + '/' + cfg.folder + '" target="_blank" rel="noopener">See them on GitHub</a>.</p>');
+        emptyState('<h3>Photos could not be loaded</h3><p>Please try again later, or <a href="https://github.com/' + cfg.user + '/' + cfg.repo + '/tree/' + (cfg.branch || 'main') + '/' + cfg.folder + '" target="_blank" rel="noopener">see them on GitHub</a>.</p>');
       });
 
     var lb = $('#lightbox'), lbImg = $('img', lb), lbCap = $('figcaption', lb), cur = -1, lastFocus = null;
@@ -671,7 +671,7 @@
     function open(fig) {
       var list = shown(); cur = list.indexOf(fig); if (cur < 0) return;
       var g = data[+fig.dataset.index];
-      lbImg.src = g.src; lbImg.alt = g.caption; lbCap.textContent = g.caption + ' — ' + g.tag + (g.when ? ', ' + g.when : '');
+      lbImg.src = g.src; lbImg.alt = g.caption; lbCap.textContent = g.caption + ' (' + g.tag + (g.when ? ', ' + g.when : '') + ')';
       if (lb.hidden) lastFocus = document.activeElement;
       lb.hidden = false; document.body.style.overflow = 'hidden';
       $('.lightbox__close', lb).focus();
@@ -696,7 +696,7 @@
   $$('.email-copy').forEach(function (btn) {
     btn.addEventListener('click', function () {
       var email = btn.dataset.email;
-      copyText(email, 'Email copied — ' + email, function () { location.href = 'mailto:' + email; });
+      copyText(email, 'Email address copied: ' + email, function () { location.href = 'mailto:' + email; });
     });
   });
 
